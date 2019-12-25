@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: bootkeycloak
+  name: bootkeycloak-svc
+spec:
+  ports:
+  - name: "8080"
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: bootkeycloak
+  type: LoadBalancer
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: bootkeycloak
+  name: bootkeycloak
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bootkeycloak
+    spec:
+      containers:
+      - image: registry.cn-hangzhou.aliyuncs.com/jingshan/bootkeycloak:latest
+        name: web
+        ports:
+        - containerPort: 8080
+        env:
+          - name: KEYCLOAK_AUTH_SERVER_URL
+            value: "http://<keycloak server address>/auth"
